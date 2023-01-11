@@ -8,19 +8,17 @@ This is a fork of [facebook/proxygen](https://github.com/facebook/proxygen). Thi
 
 ## Setting up this pipeline on Harness CI Hosted Builds
 
-1. Create a [GitHub Account](https://github.com) or use an existing one
+1. Fork [this repository](https://github.com/facebook/proxygen/fork) into your GitHub account. 
 
-2. Fork [this repository](https://github.com/facebook/proxygen/fork) into your GitHub account. 
-
-3. If you are new to Harness CI, signup for [Harness CI](https://app.harness.io/auth/#/signup)
+2. If you are new to Harness CI, signup for [Harness CI](https://app.harness.io/auth/#/signup)
   * Select the `Continuous Integration` module and choose the `Starter pipeline` wizard to create your first pipeline using the forked repo from #2.
   * Go to the newly created pipeline and hit the `Triggers`tab. If everything went well, you should see two triggers auto-created. A `Pull Request`trigger and a `Push`trigger. For this exercise, we only need `Pull Request`trigger to be enabled. So, please disable or delete the `Push`trigger.
 
-4. If you are an existing Harness CI user, create a new pipeline to use the cloud option for infrastructure and setup the PR trigger.
+3. If you are an existing Harness CI user, create a new pipeline to use the cloud option for infrastructure and set up the PR trigger.
 
-5. Add the pipeline.yaml stages in the YAML editor:
+4. Add the pipeline.yaml stages in the YAML editor:
 
-```
+```yaml
   tags: {}
   properties:
     ci:
@@ -140,13 +138,15 @@ This is a fork of [facebook/proxygen](https://github.com/facebook/proxygen). Thi
             type: Cloud
             spec: {}
 ```
-> Make sure you modify the connectors with the connectors you create. 
-6. Create a Pull Request in a new branch by updating the project. (e.g. add a comment or new line). This should invoke a build in Harness CI
 
-7. Merge the PR after the pipeline execution is successfull.
+> _NOTE: Make sure you modify the connectors with the connectors you create._
 
-8. Enable GitHub Actions : The repository forked in Step 2 already has a GitHub Actions workflow file added. You can choose to enable this workflow from the Actions tab on GitHub.
+5. Create a Pull Request in a new branch by updating the project. (e.g. add a comment or new line). This should invoke a build-in Harness CI
 
-9. Create any other Pull Request with a few source or test file changes. You can consider cherry-picking any of the commits from the main repository.
+6. Merge the PR after the pipeline execution is successful.
 
-10. This PR will trigger the Harness CI pipeline (as well as GitHub Actions workflow if enabled in Step-9). Here we are implementing a single workflow for Github Actions. (Get_Deps_Mac)
+7. Enable GitHub Actions: The repository forked in Step 2 already has a GitHub Actions workflow file added. You can choose to enable this workflow from the Actions tab on GitHub.
+
+8. Create any other Pull Request with a few source or test file changes. You can consider cherry-picking any of the commits from the main repository.
+
+9. This PR will trigger the Harness CI pipeline (as well as GitHub Actions workflow if enabled in Step-9). Here we are implementing a single workflow for GitHub Actions. (Get_Deps_Mac)
