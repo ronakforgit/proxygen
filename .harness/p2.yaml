@@ -1,0 +1,123 @@
+pipeline:
+  name: p2
+  identifier: p2
+  projectIdentifier: NgLabs
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: <+input>
+        repoName: proxygen
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: BuildKernel
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Fetch Deps
+                  identifier: Fetch_Deps
+                  spec:
+                    shell: Sh
+                    command: python3 build/fbcode_builder/getdeps.py fetch --no-tests <+matrix.deps>
+                  failureStrategies: []
+                  strategy:
+                    matrix:
+                      deps:
+                        - ninja
+                        - cmake
+                        - zlib
+                        - zstd
+                        - boost
+                        - double-conversion
+                        - fmt
+                        - gflags
+                        - glog
+                        - googletest
+                        - libevent
+                        - lz4
+                        - snappy
+                        - autoconf
+                        - automake
+                        - libtool
+                        - gperf
+                        - libsodium
+                        - xz
+                        - folly
+                        - fizz
+                        - mvfst
+                        - wangle
+                      maxConcurrency: 5
+              - step:
+                  type: Run
+                  name: Build Deps
+                  identifier: Build_Deps
+                  spec:
+                    shell: Sh
+                    command: python3 build/fbcode_builder/getdeps.py build --no-tests <+matrix.deps>
+                  failureStrategies: []
+                  strategy:
+                    matrix:
+                      deps:
+                        - ninja
+                        - cmake
+                        - zlib
+                        - zstd
+                        - boost
+                        - double-conversion
+                        - fmt
+                        - gflags
+                        - glog
+                        - googletest
+                        - libevent
+                        - lz4
+                        - snappy
+                        - autoconf
+                        - automake
+                        - libtool
+                        - gperf
+                        - libsodium
+                        - xz
+                        - folly
+                        - fizz
+                        - mvfst
+                        - wangle
+                      maxConcurrency: 1
+              - step:
+                  type: Run
+                  name: Build Proxygen
+                  identifier: Build_Proxygen
+                  spec:
+                    shell: Sh
+                    command: python3 build/fbcode_builder/getdeps.py build --src-dir=. proxygen  --project-install-prefix proxygen:/usr/local
+              - step:
+                  type: Run
+                  name: Copy artifacts
+                  identifier: Copy_artifacts
+                  spec:
+                    shell: Sh
+                    command: python3 build/fbcode_builder/getdeps.py fixup-dyn-deps --strip --src-dir=. proxygen _artifacts/linux  --project-install-prefix proxygen:/usr/local --final-install-prefix /usr/local
+              - step:
+                  type: Run
+                  name: Test Proxygen
+                  identifier: Test_Proxygen
+                  spec:
+                    shell: Sh
+                    command: python3 build/fbcode_builder/getdeps.py test --src-dir=. proxygen  --project-install-prefix proxygen:/usr/local
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - "**/*.xml"
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
